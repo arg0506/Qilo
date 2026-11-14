@@ -1,0 +1,14 @@
+{
+  "name": "@quiz-arena/api",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Quiz Arena server: authoritative game engine (REST and Socket.IO gateway to follow)",
+  "scripts": {
+    "test": "node --test src/**/*.test.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "engines": {
+    "node": ">=24"
+  }
+}
