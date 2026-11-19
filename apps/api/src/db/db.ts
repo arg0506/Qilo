@@ -14,7 +14,7 @@ export const DB = Symbol("DB");
 export const PG_POOL = Symbol("PG_POOL");
 
 export function createPool(databaseUrl: string): pg.Pool {
-  return new pg.Pool({ connectionString: databaseUrl, max: 20 });
+  return new pg.Pool({ connectionString: databaseUrl, max: Number(process.env.DB_POOL_MAX ?? 30) });
 }
 
 export function createDb(pool: pg.Pool): Db {

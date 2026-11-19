@@ -233,7 +233,7 @@ export class RoomsService {
       const updated = await activePlayers(tx, room.id);
       fx.room(room.id, E.roomUpdated, { changes: { players: updated.map(serializePlayer) } });
       return { resumeToken };
-    });
+    }, latest.id);
     this.analytics.track("player_joined", user.id, { guest: user.isGuest });
     return {
       roomId: latest.id,

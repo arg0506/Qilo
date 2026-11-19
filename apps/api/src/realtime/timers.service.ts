@@ -1,4 +1,4 @@
-import { Inject, Injectable, Logger, type OnApplicationShutdown, type OnModuleInit } from "@nestjs/common";
+import { type BeforeApplicationShutdown, Inject, Injectable, Logger, type OnApplicationShutdown, type OnModuleInit } from "@nestjs/common";
 import { Queue, Worker, type Job } from "bullmq";
 import { APP_CONFIG, type AppConfig } from "../config/config.ts";
 import { createRedis } from "../redis/redis.module.ts";
@@ -11,7 +11,7 @@ const QUEUE = "qilo-game-timers";
 // handler is idempotent and re-checks state, so a duplicate or stale job does
 // nothing.
 @Injectable()
-export class TimersService implements OnModuleInit, OnApplicationShutdown {
+export class TimersService implements OnModuleInit, BeforeApplicationShutdown, OnApplicationShutdown {
   private readonly log = new Logger("Timers");
   private queue!: Queue;
   private worker?: Worker;
@@ -50,8 +50,13 @@ export class TimersService implements OnModuleInit, OnApplicationShutdown {
     await this.queue.add(job.type, job, { jobId: jobId(job), delay: delayMs });
   }
 
-  async onApplicationShutdown() {
+  // Stop taking jobs before database pools close. Unfinished jobs stay in
+  // Redis and another instance (or this one after restart) runs them.
+  async beforeApplicationShutdown() {
     await this.worker?.close();
+  }
+
+  async onApplicationShutdown() {
     await this.queue?.close();
     // BullMQ does not close connections it was handed.
     await Promise.allSettled(this.connections.map((c) => c.quit()));

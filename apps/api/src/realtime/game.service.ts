@@ -42,6 +42,7 @@ import {
 import { serializeRoom } from "../rooms/snapshot.service.ts";
 import { Broadcaster } from "./broadcaster.service.ts";
 import { Effects, type TimerJob } from "./effects.ts";
+import { KeyedMutex } from "../common/keyed-mutex.ts";
 import { ServerEvents as E } from "./protocol.ts";
 import { TimersService } from "./timers.service.ts";
 
@@ -63,6 +64,7 @@ export interface AnswerCommand {
 @Injectable()
 export class GameService implements OnModuleInit {
   private readonly log = new Logger("Game");
+  private readonly roomQueue = new KeyedMutex();
 
   constructor(
     @Inject(DB) private readonly db: Db,
@@ -78,12 +80,16 @@ export class GameService implements OnModuleInit {
     this.timers.register((job) => this.onTimer(job));
   }
 
-  // Runs `fn` in a transaction and applies its effects after commit.
-  async run<T>(fn: (tx: Tx, fx: Effects) => Promise<T>): Promise<T> {
-    const fx = new Effects();
-    const result = await this.db.transaction((tx) => fn(tx, fx));
-    await this.flush(fx);
-    return result;
+  // Runs `fn` in a transaction and applies its effects after commit. With a
+  // room id, work for that room is queued in-process first.
+  async run<T>(fn: (tx: Tx, fx: Effects) => Promise<T>, roomId?: string): Promise<T> {
+    const exec = async () => {
+      const fx = new Effects();
+      const result = await this.db.transaction((tx) => fn(tx, fx));
+      await this.flush(fx);
+      return result;
+    };
+    return roomId ? this.roomQueue.run(roomId, exec) : exec();
   }
 
   async flush(fx: Effects) {
@@ -129,7 +135,7 @@ export class GameService implements OnModuleInit {
       await tx.update(roomPlayers).set({ isReady: ready }).where(eq(roomPlayers.id, member.id));
       await this.emitPlayers(tx, fx, room);
       return { ready };
-    });
+    }, roomId);
   }
 
   async emitPlayers(tx: Tx, fx: Effects, room: RoomRow) {
@@ -145,7 +151,7 @@ export class GameService implements OnModuleInit {
       await this.saveRoom(tx, room, { isLocked: locked });
       this.roomUpdated(fx, room);
       return { isLocked: locked };
-    });
+    }, roomId);
   }
 
   async removePlayer(roomId: string, hostId: string, playerId: string) {
@@ -168,7 +174,7 @@ export class GameService implements OnModuleInit {
         fx.room(room.id, E.leaderboardUpdate, { entries: await leaderboard(tx, room.currentMatchId, room.id), isFinal: false });
       }
       return { removed: playerId };
-    });
+    }, roomId);
     await this.checkEarlyReveal(roomId);
     return result;
   }
@@ -240,7 +246,7 @@ export class GameService implements OnModuleInit {
       fx.schedule({ type: "countdown_end", roomId, matchId: match!.id }, this.config.COUNTDOWN_MS);
       this.analytics.track("match_started", userId, { players: players.length, questions: ordered.length, pacing: room.pacing });
       return { matchId: match!.id, countdownEndsAt: countdownEndsAt.toISOString() };
-    });
+    }, roomId);
   }
 
   // Opens the question at `position`. Caller holds the room lock.
@@ -355,7 +361,7 @@ export class GameService implements OnModuleInit {
         duplicate: false,
         earlyLock: shouldRevealEarly(connected, answered),
       };
-    });
+    }, cmd.roomId);
     if (outcome.earlyLock) await this.lockQuestion(cmd.roomId, outcome.matchQuestionId, "all_answered");
     return { matchQuestionId: outcome.matchQuestionId, acceptedAt: outcome.acceptedAt, duplicate: outcome.duplicate };
   }
@@ -488,7 +494,7 @@ export class GameService implements OnModuleInit {
         });
       }
       fx.schedule({ type: "reveal_end", roomId, matchQuestionId: mq.id }, revealMs);
-    });
+    }, roomId);
   }
 
   private async onRevealEnd(roomId: string, matchQuestionId: string) {
@@ -524,7 +530,7 @@ export class GameService implements OnModuleInit {
 
       // A host-paced pause takes effect as soon as the scoreboard is up.
       if (room.pacing === "host_paced" && room.pauseRequested) await this.enterPause(tx, fx, room);
-    });
+    }, roomId);
   }
 
   // Leaves the scoreboard: pause, next question or finish.
@@ -566,7 +572,7 @@ export class GameService implements OnModuleInit {
       if (phaseOf(room) !== "SCOREBOARD") throw new AppError("INVALID_STATE", "You can move on once the scoreboard is showing.");
       await this.advance(tx, fx, room);
       return { status: room.status };
-    });
+    }, roomId);
   }
 
   // A pause lets the current question run to its deadline and reveal, then
@@ -582,7 +588,7 @@ export class GameService implements OnModuleInit {
       if (phase === "SCOREBOARD" || phase === "NEXT_QUESTION") await this.enterPause(tx, fx, room);
       else this.roomUpdated(fx, room);
       return { status: room.status, pauseRequested: true };
-    });
+    }, roomId);
   }
 
   async resume(roomId: string, userId: string) {
@@ -592,7 +598,7 @@ export class GameService implements OnModuleInit {
       if (room.hostPresence !== "connected") throw new AppError("INVALID_STATE", "Host controls are paused while you reconnect.");
       await this.resumeInTx(tx, fx, room);
       return { status: room.status };
-    });
+    }, roomId);
   }
 
   private async resumeInTx(tx: Tx, fx: Effects, room: RoomRow) {
@@ -618,7 +624,7 @@ export class GameService implements OnModuleInit {
       const room = await lockRoom(tx, roomId);
       if (userId) await this.assertHost(tx, room, userId);
       return this.closeInTx(tx, fx, room, reason, userId);
-    });
+    }, roomId);
   }
 
   private async closeInTx(tx: Tx, fx: Effects, room: RoomRow, reason: string, actorId: string | null) {
@@ -675,7 +681,7 @@ export class GameService implements OnModuleInit {
         if (wasAbsentPause) await this.resumeInTx(tx, fx, room);
         else this.roomUpdated(fx, room);
       }
-    });
+    }, roomId);
   }
 
   async disconnected(roomId: string, userId: string) {
@@ -696,7 +702,7 @@ export class GameService implements OnModuleInit {
         this.roomUpdated(fx, room);
         fx.schedule({ type: "host_grace_end", roomId, since }, this.config.HOST_GRACE_MS);
       }
-    });
+    }, roomId);
     // A player who drops no longer holds the question open.
     await this.checkEarlyReveal(roomId);
   }
@@ -710,7 +716,7 @@ export class GameService implements OnModuleInit {
       // The seat and score stay; the player can rejoin until the room ends.
       await tx.update(roomPlayers).set({ connectionState: "DISCONNECTED" }).where(eq(roomPlayers.id, member.id));
       fx.room(roomId, E.playerPresence, { playerId: userId, state: "DISCONNECTED" });
-    });
+    }, roomId);
   }
 
   private async onHostGraceEnd(roomId: string, since: number) {
@@ -735,7 +741,7 @@ export class GameService implements OnModuleInit {
       } else {
         this.roomUpdated(fx, room);
       }
-    });
+    }, roomId);
   }
 
   private async enterPauseRefresh(fx: Effects, room: RoomRow) {
@@ -750,7 +756,7 @@ export class GameService implements OnModuleInit {
       if (room.hostPresence !== "absent" || room.hostAbsentSince?.getTime() !== since) return;
       // Host gone for 5 minutes: end early with partial results (spec 8.6).
       await this.closeInTx(tx, fx, room, "host_absent", null);
-    });
+    }, roomId);
   }
 
   private async onLobbyExpiry(roomId: string) {
@@ -766,7 +772,7 @@ export class GameService implements OnModuleInit {
       await this.saveRoom(tx, room, { status: room.status, endedAt: new Date() });
       fx.room(roomId, E.gameFinished, { matchId: null, completionReason: "expired", results: [] });
       this.roomUpdated(fx, room);
-    });
+    }, roomId);
   }
 
   private async onCountdownEnd(roomId: string, matchId: string) {
@@ -775,7 +781,7 @@ export class GameService implements OnModuleInit {
       if (phaseOf(room) !== "STARTING" || room.currentMatchId !== matchId) return;
       const match = await getMatch(tx, matchId);
       await this.beginQuestion(tx, fx, room, match, 0);
-    });
+    }, roomId);
   }
 
   async onTimer(job: TimerJob) {
@@ -794,7 +800,7 @@ export class GameService implements OnModuleInit {
           const mq = await matchQuestionAt(tx, match.id, match.currentPosition);
           if (mq?.id !== job.matchQuestionId) return;
           await this.advance(tx, fx, room);
-        });
+        }, job.roomId);
       case "player_grace_end":
         return this.onPlayerGraceEnd(job.roomId, job.userId, job.since);
       case "host_grace_end":
@@ -839,7 +845,7 @@ export class GameService implements OnModuleInit {
       fx.then(() => this.broadcaster.evict(roomId, userId));
       await this.emitPlayers(tx, fx, room);
       return { left: true };
-    });
+    }, roomId);
   }
 
   // Used by maintenance to recover rooms whose timers were lost.
