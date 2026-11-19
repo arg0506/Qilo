@@ -31,6 +31,68 @@ It is built for the moment a group wants to compete on knowledge *right now*: tw
 
 ---
 
+## Repository layout
+
+```text
+qilo/
+├── apps/
+│   ├── api/                      # TypeScript game engine (server-authoritative)
+│   │   ├── package.json
+│   │   └── src/
+│   │       ├── game/
+│   │       │   ├── scoring.ts    # classic-v1
+│   │       │   ├── standings.ts  # tie-breaks + ranking
+│   │       │   ├── lifecycle.ts  # state machine
+│   │       │   ├── answer.ts     # acceptance + early reveal
+│   │       │   └── game.test.ts  # 31 tests
+│   │       └── room/
+│   │           └── room-code.ts
+│   └── mobile/                   # Flutter client
+│       ├── lib/
+│       │   ├── design/           # tokens, theme, widgets
+│       │   ├── game/             # controller, models, scoring mirror
+│       │   ├── screens/          # 6 screens
+│       │   └── main.dart
+│       └── test/
+├── docs/
+│   ├── assets/                   # README illustrations (SVG)
+│   ├── ui-reference/             # visual reference
+│   └── Quiz_Arena_Complete_Product_and_Technical_Documentation_v1.1.docx
+├── LICENSE
+└── README.md
+```
+
+---
+
+## Getting started
+
+### Prerequisites
+
+- **Node.js 24+** for the engine. It runs TypeScript directly, with no build step and no dependencies.
+- **Flutter 3.x** (Dart SDK `^3.13.7`) for the mobile app.
+
+### Run the engine tests
+
+```bash
+cd apps/api
+npm test            # node --test src/**/*.test.ts
+```
+
+On Node 22, you can run the same tests with `node --experimental-strip-types --test src/**/*.test.ts`.
+
+### Run the mobile app
+
+```bash
+cd apps/mobile
+flutter pub get
+flutter test        # 13 tests
+flutter run         # pick a device or emulator
+```
+
+> **Tip:** when you set up the Flutter SDK for the first time, run Flutter from a folder that is *not* this project's root. The tool runs `pub upgrade` in the current directory.
+
+---
+
 ## License
 
 [MIT](LICENSE) © 2026 Arpan Roy
