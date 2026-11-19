@@ -293,6 +293,60 @@ flutter run         # pick a device or emulator
 
 ---
 
+## Project status
+
+| Check | Result |
+|---|---|
+| Engine tests (`apps/api`, `npm test`) | ✅ 31 of 31 pass |
+| Flutter tests (`apps/mobile`, `flutter test`) | ✅ 13 of 13 pass |
+| Flutter analyzer | ✅ No issues |
+| Flutter web build (`flutter build web`) | ✅ Builds |
+| Android, iOS, Windows builds | ⏳ Not yet verified |
+| On-device visual pass against the reference | ⏳ Not yet done |
+
+---
+
+## Roadmap
+
+Following the implementation order in spec §18.1:
+
+- [x] Scoring module and state machine, with exhaustive unit tests, before any UI
+- [x] Flutter design system and screens for lobby, gameplay, reveal and results
+- [x] Local mock game with bots, both pacing modes, mirrored rules
+- [ ] NestJS REST API and Socket.IO realtime gateway
+- [ ] Realtime repository in the Flutter app (replacing the mock)
+- [ ] PostgreSQL persistence, Redis room state and presence, auth (guest to account)
+- [ ] Full match with 3 to 5 test clients in both pacing modes
+- [ ] Reconnect, host-absence handling, observability, load tests, security controls
+- [ ] Quiz library and editor (M1), Big Screen display view, reporting
+- [ ] Closed beta
+
+---
+
+## Design decisions
+
+These come from the v1.1 spec's decision log.
+
+| ID | Decision |
+|---|---|
+| **D-05** | Host commands travel over the socket, not REST. The lobby UI is already wired for this. |
+| **D-07** | A player's first accepted answer is final. A different second answer is rejected. |
+| **D-09** | A question reveals early once every *connected* player has answered. |
+| **D-13** | Scoring is `classic-v1` (see [Scoring](#scoring-classic-v1)), stored per match. Changing a profile never alters past results. |
+| **D-14** | Automatic pacing is the default. Host-paced mode is available to every host and recommended for events and classrooms. |
+| **D-15** | If the host drops: 60 s grace, then up to 5 minutes `PAUSED`, then `ENDED_EARLY` with partial results. *(Planned, not built.)* |
+| **D-16** | Options are shuffled once per match, in the same order for everyone, with canonical option keys. *(Planned, not built.)* |
+| §8.5 | Tie-breaks never use arrival order. Fully tied players share a rank. |
+
+---
+
+## Documentation
+
+- 📘 **Product and technical spec v1.1:** [`docs/Quiz_Arena_Complete_Product_and_Technical_Documentation_v1.1.docx`](docs/Quiz_Arena_Complete_Product_and_Technical_Documentation_v1.1.docx). It covers personas, the screen inventory, the lifecycle, scoring, the data model, REST and realtime contracts, security, fair play, the test plan and release operations.
+- 🎨 **UI reference:** [`docs/ui-reference/`](docs/ui-reference)
+
+---
+
 ## License
 
 [MIT](LICENSE) © 2026 Arpan Roy
