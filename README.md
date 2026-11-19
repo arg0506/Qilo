@@ -205,6 +205,32 @@ flowchart TD
 
 ---
 
+## The Flutter app
+
+`apps/mobile` is a Flutter client for Android and iOS, with web planned for later. It is fully playable today against a **local mock game** (`GameController`) with bot players. The mock follows the same rules as the engine: first answer locks, early reveal, timeouts score zero, and the same tie-breaks.
+
+| Area | Path | Notes |
+|---|---|---|
+| Screens | `lib/screens/` | splash, home, join, lobby, game (question, reveal, scoreboard), results |
+| Design system | `lib/design/` | `tokens.dart`, `theme.dart`, reusable widgets |
+| Game logic | `lib/game/` | `GameController`, models, scoring mirror, room codes, 5 starter questions |
+| Tests | `test/game_logic_test.dart` | scoring, answer locking, deadlines, pacing modes, bots, room codes |
+
+### Design tokens
+
+| Token | Colour | Use |
+|---|---|---|
+| `background` | ![#0F0E12](https://placehold.co/14x14/0F0E12/0F0E12.png) `#0F0E12` | App background |
+| `surface` | ![#1C1A21](https://placehold.co/14x14/1C1A21/1C1A21.png) `#1C1A21` | Cards and tiles |
+| `accent` | ![#9D7BFF](https://placehold.co/14x14/9D7BFF/9D7BFF.png) `#9D7BFF` | Primary actions, highlights |
+| `correct` | ![#3DDC97](https://placehold.co/14x14/3DDC97/3DDC97.png) `#3DDC97` | Correct answers |
+| `incorrect` | ![#FF5C7A](https://placehold.co/14x14/FF5C7A/FF5C7A.png) `#FF5C7A` | Wrong answers |
+| `warning` | ![#FFB84D](https://placehold.co/14x14/FFB84D/FFB84D.png) `#FFB84D` | Streaks, time running out |
+
+Answer states are always shown with an **icon and a label as well as colour**, never colour alone. Touch targets are at least **56 dp** for answers and **44 dp** for other controls. Cards use a 28 px radius and buttons are pill-shaped, following the UI reference in [`docs/ui-reference`](docs/ui-reference).
+
+---
+
 ## Repository layout
 
 ```text
