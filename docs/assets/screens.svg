@@ -1,0 +1,134 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1240 500" width="1240" height="500" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 0 L10 5 L0 10 z" fill="#6F6A80"/>
+    </marker>
+    <g id="frame">
+      <rect x="0" y="0" width="172" height="340" rx="28" fill="#1C1A21" stroke="#3A3642" stroke-width="2"/>
+      <rect x="9" y="9" width="154" height="322" rx="21" fill="#0F0E12"/>
+      <rect x="66" y="16" width="40" height="5" rx="2.5" fill="#2A2730"/>
+    </g>
+  </defs>
+  <rect width="1240" height="500" rx="24" fill="#16131D"/>
+  <text x="32" y="48" font-size="24" font-weight="700" fill="#F5F3FF">Player journey in the Flutter app</text>
+  <text x="32" y="74" font-size="15" fill="#A19CB3">apps/mobile/lib/screens · runs today on a local mock game with bots</text>
+
+  <g font-size="11">
+    <!-- 1 Splash -->
+    <g transform="translate(32 104)">
+      <use href="#frame"/>
+      <circle cx="86" cy="140" r="34" fill="#9D7BFF"/>
+      <text x="86" y="150" font-size="30" font-weight="800" fill="#12091F" text-anchor="middle">Q</text>
+      <text x="86" y="204" font-size="15" font-weight="700" fill="#F5F3FF" text-anchor="middle">Quiz Arena</text>
+      <rect x="56" y="222" width="60" height="4" rx="2" fill="#2A2730"/>
+      <rect x="56" y="222" width="34" height="4" rx="2" fill="#9D7BFF"/>
+    </g>
+    <!-- 2 Home -->
+    <g transform="translate(234 104)">
+      <use href="#frame"/>
+      <text x="22" y="48" fill="#A19CB3">Welcome back</text>
+      <text x="22" y="66" font-size="14" font-weight="700" fill="#F5F3FF">Guest player</text>
+      <rect x="20" y="80" width="132" height="66" rx="18" fill="#9D7BFF"/>
+      <text x="32" y="106" font-size="13" font-weight="700" fill="#12091F">Host a game</text>
+      <text x="32" y="124" font-size="9" fill="#12091F">Create a room from a quiz</text>
+      <rect x="20" y="154" width="132" height="56" rx="18" fill="#1C1A21"/>
+      <text x="32" y="178" font-size="13" font-weight="700" fill="#F5F3FF">Join with code</text>
+      <text x="32" y="196" font-size="9" fill="#A19CB3">Enter the 6-character code</text>
+      <rect x="20" y="218" width="132" height="56" rx="18" fill="#1C1A21"/>
+      <text x="32" y="242" font-size="13" font-weight="700" fill="#F5F3FF">Starter quizzes</text>
+      <text x="32" y="260" font-size="9" fill="#A19CB3">5 ready to play</text>
+      <rect x="20" y="284" width="56" height="20" rx="10" fill="#2A2730"/>
+      <text x="48" y="298" font-size="9" fill="#3DDC97" text-anchor="middle">Live now</text>
+    </g>
+    <!-- 3 Join -->
+    <g transform="translate(436 104)">
+      <use href="#frame"/>
+      <text x="22" y="54" font-size="14" font-weight="700" fill="#F5F3FF">Join a game</text>
+      <text x="22" y="86" fill="#A19CB3">Enter the room code</text>
+      <g fill="#1C1A21" stroke="#3A3642">
+        <rect x="20" y="100" width="20" height="30" rx="7"/><rect x="43" y="100" width="20" height="30" rx="7"/>
+        <rect x="66" y="100" width="20" height="30" rx="7"/><rect x="89" y="100" width="20" height="30" rx="7" stroke="#9D7BFF"/>
+        <rect x="112" y="100" width="20" height="30" rx="7"/><rect x="135" y="100" width="20" height="30" rx="7"/>
+      </g>
+      <g font-size="13" font-weight="700" fill="#F5F3FF" text-anchor="middle">
+        <text x="30" y="120">K</text><text x="53" y="120">7</text><text x="76" y="120">P</text>
+      </g>
+      <text x="22" y="156" font-size="9" fill="#A19CB3">Ask your host for the code</text>
+      <text x="22" y="168" font-size="9" fill="#A19CB3">on their screen.</text>
+      <rect x="20" y="276" width="132" height="36" rx="18" fill="#9D7BFF"/>
+      <text x="86" y="298" font-size="12" font-weight="700" fill="#12091F" text-anchor="middle">Join game</text>
+    </g>
+    <!-- 4 Lobby -->
+    <g transform="translate(638 104)">
+      <use href="#frame"/>
+      <text x="22" y="48" font-size="14" font-weight="700" fill="#F5F3FF">Your room</text>
+      <rect x="20" y="60" width="132" height="62" rx="18" fill="#1C1A21"/>
+      <text x="86" y="78" font-size="8" fill="#A19CB3" text-anchor="middle" letter-spacing="2">ROOM CODE</text>
+      <text x="86" y="104" font-size="18" font-weight="700" fill="#F5F3FF" text-anchor="middle" letter-spacing="2">K7PX3M</text>
+      <text x="22" y="144" font-size="12" font-weight="700" fill="#F5F3FF">Players</text>
+      <rect x="70" y="133" width="22" height="15" rx="7.5" fill="#2A2730"/><text x="81" y="144" font-size="9" fill="#CDBDFF" text-anchor="middle">4</text>
+      <g>
+        <circle cx="36" cy="172" r="13" fill="#9D7BFF"/><circle cx="68" cy="172" r="13" fill="#3DDC97"/>
+        <circle cx="100" cy="172" r="13" fill="#FFB84D"/><circle cx="132" cy="172" r="13" fill="#FF5C7A"/>
+      </g>
+      <rect x="20" y="198" width="132" height="30" rx="15" fill="#1C1A21"/>
+      <text x="32" y="217" font-size="10" fill="#F5F3FF">Host-paced</text>
+      <rect x="122" y="206" width="22" height="14" rx="7" fill="#9D7BFF"/><circle cx="137" cy="213" r="5" fill="#12091F"/>
+      <rect x="20" y="234" width="132" height="30" rx="15" fill="#1C1A21"/>
+      <text x="32" y="253" font-size="10" fill="#F5F3FF">Lock room</text>
+      <rect x="122" y="242" width="22" height="14" rx="7" fill="#3A3642"/><circle cx="129" cy="249" r="5" fill="#A19CB3"/>
+      <rect x="20" y="276" width="132" height="36" rx="18" fill="#9D7BFF"/>
+      <text x="86" y="298" font-size="12" font-weight="700" fill="#12091F" text-anchor="middle">Start game</text>
+    </g>
+    <!-- 5 Game / reveal -->
+    <g transform="translate(840 104)">
+      <use href="#frame"/>
+      <rect x="20" y="38" width="132" height="5" rx="2.5" fill="#2A2730"/>
+      <rect x="20" y="38" width="88" height="5" rx="2.5" fill="#9D7BFF"/>
+      <rect x="20" y="54" width="132" height="62" rx="16" fill="#1C1A21"/>
+      <text x="30" y="78" font-size="11" font-weight="700" fill="#F5F3FF">Which planet is the</text>
+      <text x="30" y="94" font-size="11" font-weight="700" fill="#F5F3FF">Red Planet?</text>
+      <rect x="20" y="124" width="132" height="30" rx="15" fill="#1C1A21" stroke="#3A3642"/><text x="34" y="143" fill="#F5F3FF">Venus</text>
+      <rect x="20" y="160" width="132" height="30" rx="15" fill="#3DDC97" fill-opacity="0.16" stroke="#3DDC97" stroke-width="2"/><text x="34" y="179" fill="#F5F3FF">Mars</text>
+      <text x="140" y="179" fill="#3DDC97" text-anchor="end">✓</text>
+      <rect x="20" y="196" width="132" height="30" rx="15" fill="#1C1A21" stroke="#3A3642"/><text x="34" y="215" fill="#F5F3FF">Jupiter</text>
+      <rect x="20" y="232" width="132" height="30" rx="15" fill="#1C1A21" stroke="#3A3642"/><text x="34" y="251" fill="#F5F3FF">Saturn</text>
+      <rect x="20" y="272" width="132" height="40" rx="14" fill="#2A2730"/>
+      <text x="32" y="297" font-size="16" font-weight="800" fill="#9D7BFF">+940</text>
+      <text x="140" y="297" font-size="10" fill="#A19CB3" text-anchor="end">2 streak</text>
+    </g>
+    <!-- 6 Results -->
+    <g transform="translate(1042 104)">
+      <use href="#frame"/>
+      <text x="22" y="48" font-size="14" font-weight="700" fill="#F5F3FF">Results</text>
+      <text x="22" y="78" font-size="18" font-weight="800" fill="#F5F3FF">You finished #1</text>
+      <rect x="28" y="140" width="36" height="50" rx="8" fill="#2A2730"/>
+      <rect x="68" y="110" width="36" height="80" rx="8" fill="#9D7BFF"/>
+      <rect x="108" y="156" width="36" height="34" rx="8" fill="#2A2730"/>
+      <g font-size="12" font-weight="800" text-anchor="middle">
+        <text x="46" y="168" fill="#F5F3FF">2</text><text x="86" y="138" fill="#12091F">1</text><text x="126" y="178" fill="#F5F3FF">3</text>
+      </g>
+      <text x="22" y="214" font-size="11" font-weight="700" fill="#F5F3FF">Everyone else</text>
+      <rect x="20" y="222" width="132" height="24" rx="12" fill="#1C1A21"/>
+      <text x="32" y="238" font-size="10" fill="#A19CB3">4</text><text x="46" y="238" font-size="10" fill="#F5F3FF">Rhea</text><text x="140" y="238" font-size="10" fill="#F5F3FF" text-anchor="end">1,880</text>
+      <rect x="20" y="276" width="62" height="36" rx="18" fill="#9D7BFF"/>
+      <text x="51" y="298" font-size="11" font-weight="700" fill="#12091F" text-anchor="middle">Rematch</text>
+      <rect x="90" y="276" width="62" height="36" rx="18" fill="#1C1A21" stroke="#3A3642"/>
+      <text x="121" y="298" font-size="10" fill="#F5F3FF" text-anchor="middle">Home</text>
+    </g>
+  </g>
+
+  <!-- arrows -->
+  <g stroke="#6F6A80" stroke-width="2" marker-end="url(#a)">
+    <line x1="206" y1="274" x2="230" y2="274"/>
+    <line x1="408" y1="274" x2="432" y2="274"/>
+    <line x1="610" y1="274" x2="634" y2="274"/>
+    <line x1="812" y1="274" x2="836" y2="274"/>
+    <line x1="1014" y1="274" x2="1038" y2="274"/>
+  </g>
+  <!-- captions -->
+  <g font-size="14" font-weight="600" fill="#CDBDFF" text-anchor="middle">
+    <text x="118" y="474">Splash</text><text x="320" y="474">Home</text><text x="522" y="474">Join</text>
+    <text x="724" y="474">Lobby</text><text x="926" y="474">Question + reveal</text><text x="1128" y="474">Results</text>
+  </g>
+</svg>

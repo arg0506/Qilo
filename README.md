@@ -31,6 +31,46 @@ It is built for the moment a group wants to compete on knowledge *right now*: tw
 
 ---
 
+## How a match works
+
+<p align="center">
+  <img src="docs/assets/screens.svg" alt="Player journey: splash, home, join, lobby, question and reveal, results" width="100%">
+</p>
+
+<sub>These are illustrations of the screens in <code>apps/mobile/lib/screens</code>, not device screenshots.</sub>
+
+1. **Host** creates a room and gets a code like `K7PX3M`.
+2. **Players** enter the code, appear in the lobby, and the host starts the game once at least 2 players are in.
+3. Each **question** runs on a server deadline (20 s by default). The first answer a player submits is final.
+4. The question **locks** at the deadline, or earlier if every connected player has answered. Then the correct answer, an explanation and the answer distribution are **revealed**.
+5. A **scoreboard** shows the standings. The game moves on automatically, or waits for the host in *host-paced* mode.
+6. After the last question, the **results** screen shows a podium and offers a rematch.
+
+The planned realtime protocol for one question looks like this (event names from spec §12):
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant H as Host app
+    participant S as Server (engine)
+    participant P as Player app
+
+    H->>S: host:start { roomId, idempotencyKey }
+    S-->>P: game:starting { countdownEndsAt }
+    S-->>P: question:started { prompt, options, startedAt, deadlineAt }
+    Note over S,P: No answer key is sent to clients
+    P->>S: answer:submit { matchQuestionId, optionKey, idempotencyKey }
+    S-->>P: answer:accepted { acceptedAt, streak }
+    S-->>H: question:progress { answeredCount, eligibleCount }
+    Note over S: Deadline passes or every connected player answered
+    S-->>P: question:revealed { correctOptionKeys, explanation, distribution }
+    S-->>P: score:update { pointsEarned, breakdown, streak, totalScore }
+    S-->>P: leaderboard:update { entries }
+    H->>S: host:next (host-paced mode only)
+```
+
+---
+
 ## Architecture
 
 <p align="center">
