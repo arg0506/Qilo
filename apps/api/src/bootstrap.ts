@@ -6,9 +6,16 @@ import { AppModule } from "./app.module.ts";
 import { requestId } from "./common/http.ts";
 import { RedisIoAdapter } from "./realtime/redis-io.adapter.ts";
 
+const LOG_LEVELS = {
+  debug: ["error", "warn", "log", "debug"],
+  info: ["error", "warn", "log"],
+  warn: ["error", "warn"],
+  error: ["error"],
+} as const satisfies Record<AppConfig["LOG_LEVEL"], readonly ("error" | "warn" | "log" | "debug")[]>;
+
 export async function createApp(config: AppConfig): Promise<NestExpressApplication> {
   const app = await NestFactory.create<NestExpressApplication>(AppModule.forRoot(config), {
-    logger: config.NODE_ENV === "test" ? ["error"] : config.LOG_LEVEL === "debug" ? ["error", "warn", "log", "debug"] : ["error", "warn", "log"],
+    logger: config.NODE_ENV === "test" ? ["error"] : [...LOG_LEVELS[config.LOG_LEVEL]],
     bodyParser: false,
   });
   app.set("trust proxy", true);
