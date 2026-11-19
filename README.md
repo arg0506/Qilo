@@ -20,6 +20,28 @@ It is built for the moment a group wants to compete on knowledge *right now*: tw
 
 ---
 
+## Contents
+
+- [Why Qilo](#why-qilo)
+- [How a match works](#how-a-match-works)
+- [Architecture](#architecture)
+- [The game engine](#the-game-engine)
+  - [Scoring: classic-v1](#scoring-classic-v1)
+  - [Standings and tie-breaks](#standings-and-tie-breaks)
+  - [Match lifecycle](#match-lifecycle)
+  - [Answer acceptance](#answer-acceptance)
+  - [Room codes](#room-codes)
+- [The Flutter app](#the-flutter-app)
+- [Repository layout](#repository-layout)
+- [Getting started](#getting-started)
+- [Project status](#project-status)
+- [Roadmap](#roadmap)
+- [Design decisions](#design-decisions)
+- [Documentation](#documentation)
+- [License](#license)
+
+---
+
 ## Why Qilo
 
 | Principle | What it means in practice |
