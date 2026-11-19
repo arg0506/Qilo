@@ -1,14 +1,47 @@
 {
-  "name": "@quiz-arena/api",
+  "name": "@qilo/api",
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "Quiz Arena server: authoritative game engine (REST and Socket.IO gateway to follow)",
+  "description": "Qilo server: authoritative game engine, REST API and Socket.IO gateway",
   "scripts": {
-    "test": "node --test src/**/*.test.ts",
+    "build": "rm -rf dist && tsc -p tsconfig.json",
+    "start": "node dist/main.js",
+    "dev": "npm run build && node --enable-source-maps dist/main.js",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "node dist/db/migrate-cli.js",
+    "db:seed": "node dist/db/seed-cli.js",
+    "test": "npm run build && node --enable-source-maps --test --test-concurrency=1 \"dist/**/*.test.js\"",
+    "test:unit": "npm run build && node --enable-source-maps --test \"dist/game/*.test.js\" \"dist/quizzes/*.test.js\"",
     "typecheck": "tsc --noEmit"
   },
   "engines": {
-    "node": ">=24"
+    "node": ">=22.12"
+  },
+  "dependencies": {
+    "@nestjs/common": "^11.2.11",
+    "@nestjs/core": "^11.2.11",
+    "@nestjs/platform-express": "^11.2.11",
+    "@nestjs/platform-socket.io": "^11.2.11",
+    "@nestjs/websockets": "^11.2.11",
+    "@socket.io/redis-adapter": "^8.3.0",
+    "@supabase/supabase-js": "^2.119.2",
+    "bullmq": "^6.7.8",
+    "drizzle-orm": "^0.45.4",
+    "ioredis": "^6.0.0",
+    "jose": "^6.2.18",
+    "pg": "^8.23.1",
+    "reflect-metadata": "^0.2.2",
+    "rxjs": "^7.8.2",
+    "socket.io": "^4.8.3",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/node": "^26.6.6",
+    "@types/pg": "^8.23.1",
+    "drizzle-kit": "^0.31.11",
+    "socket.io-client": "^4.8.3",
+    "typescript": "^5.9.3"
   }
 }
