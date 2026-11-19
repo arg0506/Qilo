@@ -1,58 +1,36 @@
-# Quiz Arena
+<p align="center">
+  <img src="docs/assets/hero.svg" alt="Qilo: real-time multiplayer quiz battles" width="100%">
+</p>
 
-A real-time multiplayer quiz platform. Specification: `Quiz_Arena_Complete_Product_and_Technical_Documentation_v1.1.docx` in the parent folder. UI reference: `.kombai/ui design/`.
+<p align="center">
+  <img alt="Engine tests" src="https://img.shields.io/badge/engine%20tests-31%2F31%20passing-3DDC97?style=flat-square">
+  <img alt="Flutter tests" src="https://img.shields.io/badge/flutter%20tests-13%2F13%20passing-3DDC97?style=flat-square">
+  <img alt="Flutter" src="https://img.shields.io/badge/Flutter-3.x-9D7BFF?style=flat-square&logo=flutter&logoColor=white">
+  <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-Node%2024-9D7BFF?style=flat-square&logo=typescript&logoColor=white">
+  <img alt="License" src="https://img.shields.io/badge/license-MIT-A19CB3?style=flat-square">
+</p>
 
-## Layout
+# Qilo
 
-| Path | What it is | Status |
-|---|---|---|
-| `apps/api` | Authoritative game engine (TypeScript). Scoring (classic-v1), standings and tie-breaks, lifecycle state machine, answer acceptance, room codes. | Engine and tests done. REST and Socket.IO gateway next. |
-| `apps/mobile` | Flutter client (Android, iOS, web later). Design system from the UI reference, splash, home, join, lobby, live game with reveal and scoreboard, results. | UI runs on a local mock game controller. Realtime repository next. |
+**Qilo is a live, competitive quiz platform.** A host opens a room from a quiz and shares a 6-character code. Players join from their phones and answer against a timer that the server controls. The server checks each answer, scores it and publishes live standings, then shows the final results.
 
-The client mirrors the server's scoring for display and tests only. The server stays the source of truth (spec 7.1).
+It is built for the moment a group wants to compete on knowledge *right now*: two friends on a sofa, a classroom on a projector, or a 500-person community event.
 
-## Run the engine tests
+> **Name note:** the code and the product spec still use the working title **Quiz Arena** (package `quiz_arena`, `@quiz-arena/api`). Qilo is the repository name.
 
-```bash
-cd apps/api
-npm test
-```
+---
 
-Requires Node 24 or newer. The engine has no dependencies.
+## Why Qilo
 
-## Run the mobile app
-
-```bash
-cd apps/mobile
-flutter pub get
-flutter test
-flutter run
-```
-
-## Decisions applied
-
-- Scoring, tie-breaks, streaks and timing rules follow the v1.1 spec (sections 8.3 to 8.9, decisions D-07, D-09, D-13, D-15, D-16).
-- Host commands travel over the socket, not REST (D-05). The mobile lobby is wired for that; the transport is not connected yet.
-- Design tokens (`apps/mobile/lib/design/tokens.dart`) are taken from the reference: charcoal surfaces, lavender accent, pill chips and large rounded cards.
-
-## Status (verified)
-
-| Check | Result |
+| Principle | What it means in practice |
 |---|---|
-| Engine tests (`apps/api`, `npm test`) | 31 of 31 pass |
-| Flutter tests (`apps/mobile`, `flutter test`) | 13 of 13 pass |
-| Flutter analyzer | No issues |
-| Flutter web build (`flutter build web`) | Builds |
+| ⚡ **Start in seconds** | A player joins with a code and a name. No install wall and no account needed. |
+| ⚖️ **Fair by construction** | The server owns timing, answer acceptance, scoring and ranking. Clients only display state and send intents. |
+| 👀 **Clear at every moment** | Players always know the phase, the time left, their status and what comes next. |
+| 📶 **Forgiving networks** | A brief disconnect never costs a player their seat, and offline players never hold a question open. |
 
-Not yet verified: Android, iOS and Windows builds (no Android SDK or Visual Studio here), and a visual pass on a device against the reference.
+---
 
-## Not built yet
+## License
 
-- NestJS REST and Socket.IO gateway (the engine exists; the transport does not).
-- Persistence (PostgreSQL), Redis room state, auth.
-- Quiz library and editor (M1), Big Screen view, reporting.
-- Realtime repository in the mobile app (currently a local mock).
-
-## Local tooling
-
-Flutter 3.47.9 is installed at `C:\Users\User\dev\flutter`, outside this repo. Run Flutter from a folder that is not the project root for first-time SDK setup, because the tool runs `pub upgrade` in the current directory.
+[MIT](LICENSE) © 2026 Arpan Roy

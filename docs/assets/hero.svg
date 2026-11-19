@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 440" width="1200" height="440" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#16131D"/>
+      <stop offset="1" stop-color="#0F0E12"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.78" cy="0.45" r="0.45">
+      <stop offset="0" stop-color="#9D7BFF" stop-opacity="0.35"/>
+      <stop offset="1" stop-color="#9D7BFF" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#CDBDFF"/>
+      <stop offset="1" stop-color="#9D7BFF"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1200" height="440" rx="28" fill="url(#bg)"/>
+  <rect width="1200" height="440" rx="28" fill="url(#glow)"/>
+
+  <!-- decorative dots -->
+  <g fill="#9D7BFF" opacity="0.18">
+    <circle cx="640" cy="70" r="4"/><circle cx="680" cy="380" r="3"/><circle cx="1140" cy="80" r="5"/>
+    <circle cx="1120" cy="370" r="3"/><circle cx="600" cy="300" r="2"/>
+  </g>
+
+  <!-- wordmark -->
+  <text x="72" y="150" font-size="96" font-weight="800" fill="url(#accent)" letter-spacing="-2">Qilo</text>
+  <text x="76" y="200" font-size="26" font-weight="600" fill="#F5F3FF">Real-time multiplayer quiz battles</text>
+  <text x="76" y="236" font-size="18" fill="#A19CB3">Host a room, share a 6-character code, race the clock.</text>
+  <text x="76" y="262" font-size="18" fill="#A19CB3">The server owns the timer, the scoring and the standings.</text>
+
+  <!-- pills -->
+  <g font-size="15" font-weight="600">
+    <rect x="76" y="300" width="112" height="38" rx="19" fill="#1C1A21" stroke="#3A3642"/>
+    <text x="132" y="324" text-anchor="middle" fill="#CDBDFF">Flutter</text>
+    <rect x="200" y="300" width="132" height="38" rx="19" fill="#1C1A21" stroke="#3A3642"/>
+    <text x="266" y="324" text-anchor="middle" fill="#CDBDFF">TypeScript</text>
+    <rect x="344" y="300" width="148" height="38" rx="19" fill="#1C1A21" stroke="#3A3642"/>
+    <text x="418" y="324" text-anchor="middle" fill="#CDBDFF">Socket.IO (next)</text>
+  </g>
+  <text x="76" y="380" font-size="14" fill="#6F6A80">Working title in code and spec: Quiz Arena</text>
+
+  <!-- phone -->
+  <g transform="translate(780 28)">
+    <rect x="0" y="0" width="220" height="384" rx="34" fill="#1C1A21" stroke="#3A3642" stroke-width="2"/>
+    <rect x="12" y="12" width="196" height="360" rx="26" fill="#0F0E12"/>
+    <rect x="86" y="20" width="48" height="6" rx="3" fill="#2A2730"/>
+
+    <!-- top bar -->
+    <text x="28" y="54" font-size="12" fill="#A19CB3">Question 2 of 5</text>
+    <circle cx="182" cy="50" r="15" fill="none" stroke="#2A2730" stroke-width="4"/>
+    <path d="M182 35 A15 15 0 1 1 168 55" fill="none" stroke="#9D7BFF" stroke-width="4" stroke-linecap="round"/>
+    <text x="182" y="54" font-size="11" font-weight="700" fill="#F5F3FF" text-anchor="middle">14</text>
+
+    <!-- prompt card -->
+    <rect x="24" y="72" width="172" height="84" rx="20" fill="#1C1A21"/>
+    <text x="38" y="102" font-size="14" font-weight="700" fill="#F5F3FF">How many sides</text>
+    <text x="38" y="122" font-size="14" font-weight="700" fill="#F5F3FF">does a hexagon</text>
+    <text x="38" y="142" font-size="14" font-weight="700" fill="#F5F3FF">have?</text>
+
+    <!-- options -->
+    <g font-size="13" font-weight="600">
+      <rect x="24" y="168" width="172" height="38" rx="19" fill="#1C1A21" stroke="#3A3642"/>
+      <text x="44" y="192" fill="#F5F3FF">Five</text>
+      <rect x="24" y="214" width="172" height="38" rx="19" fill="#3DDC97" fill-opacity="0.16" stroke="#3DDC97" stroke-width="2"/>
+      <text x="44" y="238" fill="#F5F3FF">Six</text>
+      <circle cx="176" cy="233" r="9" fill="#3DDC97"/>
+      <path d="M171.5 233 l3 3 l5.5 -6" fill="none" stroke="#0F0E12" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+      <rect x="24" y="260" width="172" height="38" rx="19" fill="#1C1A21" stroke="#3A3642"/>
+      <text x="44" y="284" fill="#F5F3FF">Seven</text>
+      <rect x="24" y="306" width="172" height="38" rx="19" fill="#1C1A21" stroke="#3A3642"/>
+      <text x="44" y="330" fill="#F5F3FF">Eight</text>
+    </g>
+  </g>
+
+  <!-- floating chips -->
+  <g font-weight="700">
+    <rect x="1018" y="118" width="122" height="50" rx="25" fill="#9D7BFF"/>
+    <text x="1079" y="150" font-size="22" text-anchor="middle" fill="#12091F">+1000</text>
+    <rect x="1018" y="182" width="122" height="36" rx="18" fill="#2A2730" stroke="#3A3642"/>
+    <text x="1079" y="206" font-size="14" text-anchor="middle" fill="#FFB84D">3 streak</text>
+    <rect x="640" y="300" width="124" height="60" rx="18" fill="#1C1A21" stroke="#3A3642"/>
+    <text x="702" y="322" font-size="10" text-anchor="middle" fill="#A19CB3" letter-spacing="2">ROOM CODE</text>
+    <text x="702" y="348" font-size="20" text-anchor="middle" fill="#F5F3FF" letter-spacing="3">K7PX3M</text>
+  </g>
+</svg>
