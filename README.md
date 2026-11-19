@@ -31,6 +31,18 @@ It is built for the moment a group wants to compete on knowledge *right now*: tw
 
 ---
 
+## Architecture
+
+<p align="center">
+  <img src="docs/assets/architecture.svg" alt="Architecture: Flutter app talks to a NestJS REST API and a Socket.IO gateway, both backed by the game engine, PostgreSQL and Redis" width="100%">
+</p>
+
+The project follows a **server-authoritative** model. The Flutter client keeps a copy of the scoring rules **for display and tests only**. The server is always the source of truth (spec §7.1).
+
+The plan is to share contracts, not code. The Dart and TypeScript sides each implement the same rules, and both are checked against the same worked examples from the spec. Later, versioned schemas will be shared from `packages/api-contracts`.
+
+---
+
 ## Repository layout
 
 ```text
