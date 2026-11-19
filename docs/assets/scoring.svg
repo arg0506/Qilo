@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 500" width="1200" height="500" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif">
+  <rect width="1200" height="500" rx="24" fill="#0F0E12"/>
+  <text x="40" y="52" font-size="24" font-weight="700" fill="#F5F3FF">Scoring profile classic-v1</text>
+  <text x="40" y="80" font-size="15" fill="#A19CB3">Correct = base + speed + streak. Wrong or timed out = 0 and the streak resets.</text>
+
+  <!-- scale: 1200 points = 800px  => 0.6667 px per point; base 500 = 333, speed 400 = 267, streak 100 = 67 -->
+  <g font-size="14" font-weight="600">
+    <!-- ceiling bar -->
+    <text x="40" y="140" fill="#A19CB3">Ceiling</text>
+    <rect x="200" y="118" width="333" height="36" rx="10" fill="#6E4FE6"/>
+    <rect x="533" y="118" width="333" height="36" fill="#9D7BFF"/>
+    <rect x="866" y="118" width="134" height="36" rx="10" fill="#FFB84D"/>
+    <rect x="860" y="118" width="12" height="36" fill="#FFB84D"/>
+    <text x="366" y="141" text-anchor="middle" fill="#F5F3FF">base 500</text>
+    <text x="700" y="141" text-anchor="middle" fill="#12091F">speed up to 500</text>
+    <text x="933" y="141" text-anchor="middle" fill="#12091F">streak ≤ 200</text>
+    <text x="1016" y="141" fill="#F5F3FF">1,200</text>
+
+    <!-- worked example -->
+    <text x="40" y="206" fill="#A19CB3">Worked example</text>
+    <rect x="200" y="184" width="333" height="36" rx="10" fill="#6E4FE6"/>
+    <rect x="533" y="184" width="267" height="36" fill="#9D7BFF"/>
+    <rect x="800" y="184" width="67" height="36" rx="10" fill="#FFB84D"/>
+    <rect x="794" y="184" width="12" height="36" fill="#FFB84D"/>
+    <text x="366" y="207" text-anchor="middle" fill="#F5F3FF">500</text>
+    <text x="666" y="207" text-anchor="middle" fill="#12091F">400</text>
+    <text x="833" y="207" text-anchor="middle" fill="#12091F">100</text>
+    <text x="883" y="207" fill="#F5F3FF">1,000</text>
+
+    <!-- minimum -->
+    <text x="40" y="272" fill="#A19CB3">Slowest correct</text>
+    <rect x="200" y="250" width="333" height="36" rx="10" fill="#6E4FE6"/>
+    <text x="366" y="273" text-anchor="middle" fill="#F5F3FF">500</text>
+    <text x="549" y="273" fill="#F5F3FF">500 (answered at the deadline, first in a row)</text>
+  </g>
+  <text x="200" y="312" font-size="13" fill="#6F6A80">Example from spec 8.4: correct 4 s into a 20 s question, third correct answer in a row.</text>
+
+  <!-- speed curve -->
+  <g transform="translate(40 340)">
+    <text x="0" y="0" font-size="16" font-weight="700" fill="#F5F3FF">Speed bonus over time</text>
+    <text x="0" y="22" font-size="13" fill="#A19CB3">round(500 × (1 − elapsed ÷ duration))</text>
+    <line x1="0" y1="130" x2="460" y2="130" stroke="#3A3642" stroke-width="2"/>
+    <line x1="0" y1="40" x2="0" y2="130" stroke="#3A3642" stroke-width="2"/>
+    <path d="M0 40 L440 130" stroke="#9D7BFF" stroke-width="4" stroke-linecap="round"/>
+    <circle cx="88" cy="58" r="6" fill="#FFB84D"/>
+    <text x="100" y="56" font-size="12" fill="#FFB84D">4 s → 400</text>
+    <text x="0" y="150" font-size="12" fill="#A19CB3">0 s · 500</text>
+    <text x="440" y="150" font-size="12" fill="#A19CB3" text-anchor="end">20 s · 0</text>
+  </g>
+
+  <!-- streak steps -->
+  <g transform="translate(640 340)">
+    <text x="0" y="0" font-size="16" font-weight="700" fill="#F5F3FF">Streak bonus by consecutive correct answers</text>
+    <text x="0" y="22" font-size="13" fill="#A19CB3">50 × min(streak − 1, 4)</text>
+    <line x1="0" y1="130" x2="520" y2="130" stroke="#3A3642" stroke-width="2"/>
+    <g fill="#FFB84D">
+      <rect x="10"  y="128" width="64" height="2" rx="1"/>
+      <rect x="94"  y="108" width="64" height="22" rx="6"/>
+      <rect x="178" y="86"  width="64" height="44" rx="6"/>
+      <rect x="262" y="64"  width="64" height="66" rx="6"/>
+      <rect x="346" y="42"  width="64" height="88" rx="6"/>
+      <rect x="430" y="42"  width="64" height="88" rx="6" fill-opacity="0.55"/>
+    </g>
+    <g font-size="12" fill="#F5F3FF" text-anchor="middle">
+      <text x="42" y="120">0</text><text x="126" y="100">50</text><text x="210" y="78">100</text>
+      <text x="294" y="56">150</text><text x="378" y="34">200</text><text x="462" y="34">200</text>
+    </g>
+    <g font-size="12" fill="#A19CB3" text-anchor="middle">
+      <text x="42" y="150">1st</text><text x="126" y="150">2nd</text><text x="210" y="150">3rd</text>
+      <text x="294" y="150">4th</text><text x="378" y="150">5th</text><text x="462" y="150">6th+</text>
+    </g>
+  </g>
+</svg>
