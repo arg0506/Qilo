@@ -3,10 +3,11 @@
 </p>
 
 <p align="center">
-  <img alt="Engine tests" src="https://img.shields.io/badge/engine%20tests-31%2F31%20passing-3DDC97?style=flat-square">
+  <img alt="API tests" src="https://img.shields.io/badge/API%20tests-87%20passing-3DDC97?style=flat-square">
   <img alt="Flutter tests" src="https://img.shields.io/badge/flutter%20tests-13%2F13%20passing-3DDC97?style=flat-square">
   <img alt="Flutter" src="https://img.shields.io/badge/Flutter-3.x-9D7BFF?style=flat-square&logo=flutter&logoColor=white">
-  <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-Node%2024-9D7BFF?style=flat-square&logo=typescript&logoColor=white">
+  <img alt="NestJS" src="https://img.shields.io/badge/NestJS-Socket.IO-9D7BFF?style=flat-square&logo=nestjs&logoColor=white">
+  <img alt="Supabase" src="https://img.shields.io/badge/Supabase-auth%20%2B%20storage-9D7BFF?style=flat-square&logo=supabase&logoColor=white">
   <img alt="License" src="https://img.shields.io/badge/license-MIT-A19CB3?style=flat-square">
 </p>
 
@@ -25,6 +26,7 @@ It is built for the moment a group wants to compete on knowledge *right now*: tw
 - [Why Qilo](#why-qilo)
 - [How a match works](#how-a-match-works)
 - [Architecture](#architecture)
+- [The API server](#the-api-server)
 - [The game engine](#the-game-engine)
   - [Scoring: classic-v1](#scoring-classic-v1)
   - [Standings and tie-breaks](#standings-and-tie-breaks)
@@ -68,7 +70,7 @@ It is built for the moment a group wants to compete on knowledge *right now*: tw
 5. A **scoreboard** shows the standings. The game moves on automatically, or waits for the host in *host-paced* mode.
 6. After the last question, the **results** screen shows a podium and offers a rematch.
 
-The planned realtime protocol for one question looks like this (event names from spec §12):
+The realtime protocol for one question looks like this (full contract in [docs/realtime.md](docs/realtime.md)):
 
 ```mermaid
 sequenceDiagram
@@ -101,13 +103,31 @@ sequenceDiagram
 
 The project follows a **server-authoritative** model. The Flutter client keeps a copy of the scoring rules **for display and tests only**. The server is always the source of truth (spec §7.1).
 
-The plan is to share contracts, not code. The Dart and TypeScript sides each implement the same rules, and both are checked against the same worked examples from the spec. Later, versioned schemas will be shared from `packages/api-contracts`.
+Contracts are shared, not code. The Dart and TypeScript sides each implement the same scoring rules, and both are checked against the same worked examples from the spec. The REST and socket contracts are documented in [docs/api.md](docs/api.md) and [docs/realtime.md](docs/realtime.md).
+
+---
+
+## The API server
+
+`apps/api` is a NestJS server that wraps the engine. REST handles resources; every live action goes over Socket.IO (decision D-05).
+
+| Area | What it does |
+|---|---|
+| **Identity** | Verifies Supabase access tokens (HS256 secret or project JWKS). Guests are Supabase anonymous users; upgrading keeps the same user and history. |
+| **Quiz authoring** | Drafts, reorder, publish to immutable versions, preview, image uploads through signed URLs with file-signature checks. Content is screened at publish; flagged quizzes are held for review. Five starter quizzes ship with the server. |
+| **Rooms** | Codes allocated against a partial unique index, join checks in spec order, resume tokens (hashed), late join, lock and remove, rematch, Big Screen tokens. |
+| **Live game** | Each room's state changes run under its row lock, and events go out only after commit. Timers are durable BullMQ jobs in Redis, so any instance can fire them after a restart. |
+| **Resilience** | Reconnect snapshots, 60 s player and host grace, host-absence pause then early end with partial results, idempotent commands. |
+| **Safety** | Redis rate limits and join lockout, reports with an SLA-ordered admin queue, audit log, fair-play flags for consistent sub-300 ms answers. |
+| **Privacy** | Data export, account deletion that keeps other players' standings intact, guest purge after 30 days, retention clean-up. |
+
+Measured with `npm run load` (10 rooms × 20 players, everything on one 2-vCPU box): answer acknowledgement **p95 26 ms**, against a spec target of 300 ms. Every player saw identical final standings.
 
 ---
 
 ## The game engine
 
-`apps/api/src` holds a TypeScript engine with **no runtime dependencies**. Each rule lives in a small, pure function, so it is easy to test exhaustively before any transport is added.
+`apps/api/src/game` holds the rules as small, pure TypeScript functions with no framework or database code, so they are easy to test exhaustively. The server calls them; it never re-implements them.
 
 | Module | File | Responsibility |
 |---|---|---|
@@ -229,7 +249,7 @@ flowchart TD
 
 ## The Flutter app
 
-`apps/mobile` is a Flutter client for Android and iOS, with web planned for later. It is fully playable today against a **local mock game** (`GameController`) with bot players. The mock follows the same rules as the engine: first answer locks, early reveal, timeouts score zero, and the same tie-breaks.
+`apps/mobile` is a Flutter client for Android and iOS, with web planned for later. It currently plays against a **local mock game** (`GameController`) with bot players. Connecting it to the API is the next milestone. The mock follows the same rules as the engine: first answer locks, early reveal, timeouts score zero, and the same tie-breaks.
 
 | Area | Path | Notes |
 |---|---|---|
@@ -258,28 +278,32 @@ Answer states are always shown with an **icon and a label as well as colour**, n
 ```text
 qilo/
 ├── apps/
-│   ├── api/                      # TypeScript game engine (server-authoritative)
-│   │   ├── package.json
-│   │   └── src/
-│   │       ├── game/
-│   │       │   ├── scoring.ts    # classic-v1
-│   │       │   ├── standings.ts  # tie-breaks + ranking
-│   │       │   ├── lifecycle.ts  # state machine
-│   │       │   ├── answer.ts     # acceptance + early reveal
-│   │       │   └── game.test.ts  # 31 tests
-│   │       └── room/
-│   │           └── room-code.ts
-│   └── mobile/                   # Flutter client
-│       ├── lib/
-│       │   ├── design/           # tokens, theme, widgets
-│       │   ├── game/             # controller, models, scoring mirror
-│       │   ├── screens/          # 6 screens
-│       │   └── main.dart
+│   ├── api/                       # NestJS server (TypeScript)
+│   │   ├── drizzle/               # SQL migrations
+│   │   ├── src/
+│   │   │   ├── game/              # pure engine: scoring, standings, lifecycle, answer, shuffle
+│   │   │   ├── room/              # room codes
+│   │   │   ├── realtime/          # Socket.IO gateway, game service, durable timers, presence
+│   │   │   ├── rooms/             # create/join/rematch, snapshots
+│   │   │   ├── quizzes/ media/    # authoring, publishing, uploads
+│   │   │   ├── auth/ users/       # Supabase tokens, profile, export, deletion
+│   │   │   ├── matches/ reports/  # results, history, moderation
+│   │   │   ├── db/ redis/         # schema, migrations runner, starter quizzes
+│   │   │   ├── maintenance/ health/
+│   │   │   └── test/              # e2e harness, REST and live-match tests, load script
+│   │   └── Dockerfile
+│   └── mobile/                    # Flutter client
+│       ├── lib/{design,game,screens}/
 │       └── test/
 ├── docs/
-│   ├── assets/                   # README illustrations (SVG)
-│   ├── ui-reference/             # visual reference
+│   ├── api.md                     # REST reference
+│   ├── realtime.md                # socket protocol
+│   ├── deployment.md              # Supabase setup, running, scaling
+│   ├── assets/                    # README illustrations
+│   ├── ui-reference/
 │   └── Quiz_Arena_Complete_Product_and_Technical_Documentation_v1.1.docx
+├── .github/workflows/ci.yml
+├── docker-compose.yml
 ├── LICENSE
 └── README.md
 ```
@@ -290,17 +314,32 @@ qilo/
 
 ### Prerequisites
 
-- **Node.js 24+** for the engine. It runs TypeScript directly, with no build step and no dependencies.
+- **Node.js 22.12+**, **PostgreSQL 16** and **Redis 7** for the API (or just Docker).
+- A **Supabase** project for auth and storage. See [docs/deployment.md](docs/deployment.md#supabase-setup).
 - **Flutter 3.x** (Dart SDK `^3.13.7`) for the mobile app.
 
-### Run the engine tests
+### Run the API
+
+```bash
+cp apps/api/.env.example apps/api/.env   # add your Supabase values
+docker compose up --build               # Postgres, Redis and the API on :3000
+```
+
+Or without Docker:
 
 ```bash
 cd apps/api
-npm test            # node --test src/**/*.test.ts
+npm install
+npm run dev        # builds, applies migrations, seeds starter quizzes, starts on :3000
 ```
 
-On Node 22, you can run the same tests with `node --experimental-strip-types --test src/**/*.test.ts`.
+### Run the tests
+
+```bash
+cd apps/api
+npm test                                  # 87 unit and end-to-end tests (needs Postgres + Redis)
+npm run load -- --rooms 10 --players 20   # concurrent full matches with latency percentiles
+```
 
 ### Run the mobile app
 
@@ -319,29 +358,30 @@ flutter run         # pick a device or emulator
 
 | Check | Result |
 |---|---|
-| Engine tests (`apps/api`, `npm test`) | ✅ 31 of 31 pass |
+| API unit and end-to-end tests (`apps/api`, `npm test`) | ✅ 87 of 87 pass |
+| Spec 17.2 critical acceptance tests | ✅ Covered by the live-match suite |
+| Load check, 200 concurrent players | ✅ Answer ack p95 26 ms, standings identical |
 | Flutter tests (`apps/mobile`, `flutter test`) | ✅ 13 of 13 pass |
-| Flutter analyzer | ✅ No issues |
-| Flutter web build (`flutter build web`) | ✅ Builds |
-| Android, iOS, Windows builds | ⏳ Not yet verified |
-| On-device visual pass against the reference | ⏳ Not yet done |
+| Flutter analyzer and web build | ✅ No issues, builds |
+| Docker image and CI workflow | ⏳ Written, not yet run |
+| Android, iOS builds and on-device pass | ⏳ Not yet verified |
 
 ---
 
 ## Roadmap
 
-Following the implementation order in spec §18.1:
+Phase 1 (spec milestones M0 to M4):
 
 - [x] Scoring module and state machine, with exhaustive unit tests, before any UI
 - [x] Flutter design system and screens for lobby, gameplay, reveal and results
-- [x] Local mock game with bots, both pacing modes, mirrored rules
-- [ ] NestJS REST API and Socket.IO realtime gateway
-- [ ] Realtime repository in the Flutter app (replacing the mock)
-- [ ] PostgreSQL persistence, Redis room state and presence, auth (guest to account)
-- [ ] Full match with 3 to 5 test clients in both pacing modes
-- [ ] Reconnect, host-absence handling, observability, load tests, security controls
-- [ ] Quiz library and editor (M1), Big Screen display view, reporting
-- [ ] Closed beta
+- [x] NestJS REST API and Socket.IO realtime gateway
+- [x] PostgreSQL schema and migrations, Redis presence and timers, Supabase auth (guest to account)
+- [x] Quiz library, authoring, publishing, preview and image uploads (M1)
+- [x] Rooms, lobby, lock and remove, Big Screen tokens (M2)
+- [x] Full match in both pacing modes with many clients, pause, host absence (M3)
+- [x] Reconnect, rematch, history, reporting, rate limits, audit, retention, load check (M4)
+- [ ] Flutter realtime client in place of the mock, plus quiz editor, Big Screen and history screens
+- [ ] Closed beta (M5)
 
 ---
 
@@ -356,8 +396,8 @@ These come from the v1.1 spec's decision log.
 | **D-09** | A question reveals early once every *connected* player has answered. |
 | **D-13** | Scoring is `classic-v1` (see [Scoring](#scoring-classic-v1)), stored per match. Changing a profile never alters past results. |
 | **D-14** | Automatic pacing is the default. Host-paced mode is available to every host and recommended for events and classrooms. |
-| **D-15** | If the host drops: 60 s grace, then up to 5 minutes `PAUSED`, then `ENDED_EARLY` with partial results. *(Planned, not built.)* |
-| **D-16** | Options are shuffled once per match, in the same order for everyone, with canonical option keys. *(Planned, not built.)* |
+| **D-15** | If the host drops: 60 s grace, then up to 5 minutes `PAUSED`, then `ENDED_EARLY` with partial results. |
+| **D-16** | Options are shuffled once per match, in the same order for everyone, with canonical option keys. |
 | §8.5 | Tie-breaks never use arrival order. Fully tied players share a rank. |
 
 ---
@@ -365,6 +405,9 @@ These come from the v1.1 spec's decision log.
 ## Documentation
 
 - 📘 **Product and technical spec v1.1:** [`docs/Quiz_Arena_Complete_Product_and_Technical_Documentation_v1.1.docx`](docs/Quiz_Arena_Complete_Product_and_Technical_Documentation_v1.1.docx). It covers personas, the screen inventory, the lifecycle, scoring, the data model, REST and realtime contracts, security, fair play, the test plan and release operations.
+- 🔌 **REST API:** [`docs/api.md`](docs/api.md)
+- ⚡ **Realtime protocol:** [`docs/realtime.md`](docs/realtime.md)
+- 🚀 **Setup and deployment:** [`docs/deployment.md`](docs/deployment.md)
 - 🎨 **UI reference:** [`docs/ui-reference/`](docs/ui-reference)
 
 ---

@@ -6,7 +6,7 @@
   </defs>
   <rect width="1200" height="560" rx="24" fill="#0F0E12"/>
   <text x="40" y="52" font-size="24" font-weight="700" fill="#F5F3FF">System architecture</text>
-  <text x="40" y="80" font-size="15" fill="#A19CB3">Solid = in this repo today  ·  Dashed = specified in v1.1, not built yet</text>
+  <text x="40" y="80" font-size="15" fill="#A19CB3">Solid = built and tested  ·  Dashed = next (Flutter realtime client)</text>
 
   <!-- Client column -->
   <rect x="40" y="120" width="300" height="390" rx="24" fill="#1C1A21" stroke="#9D7BFF" stroke-width="2"/>
@@ -22,20 +22,20 @@
   <text x="64" y="476" font-size="12" fill="#6F6A80">Displays state · sends intents</text>
 
   <!-- Transport column -->
-  <rect x="440" y="150" width="280" height="110" rx="22" fill="none" stroke="#6F6A80" stroke-width="2" stroke-dasharray="8 6"/>
+  <rect x="440" y="150" width="280" height="110" rx="22" fill="#1C1A21" stroke="#9D7BFF" stroke-width="2"/>
   <text x="464" y="190" font-size="18" font-weight="700" fill="#F5F3FF">NestJS REST API</text>
-  <text x="464" y="214" font-size="13" fill="#A19CB3">Quizzes, rooms, identity, results</text>
+  <text x="464" y="214" font-size="13" fill="#A19CB3">Quizzes, rooms, Supabase auth, results</text>
   <text x="464" y="236" font-size="13" fill="#A19CB3">HTTPS · standard error format</text>
 
-  <rect x="440" y="300" width="280" height="110" rx="22" fill="none" stroke="#6F6A80" stroke-width="2" stroke-dasharray="8 6"/>
+  <rect x="440" y="300" width="280" height="110" rx="22" fill="#1C1A21" stroke="#9D7BFF" stroke-width="2"/>
   <text x="464" y="340" font-size="18" font-weight="700" fill="#F5F3FF">Socket.IO gateway</text>
-  <text x="464" y="364" font-size="13" fill="#A19CB3">room:*, question:*, host:* events</text>
+  <text x="464" y="364" font-size="13" fill="#A19CB3">/game · durable timers (BullMQ)</text>
   <text x="464" y="386" font-size="13" fill="#A19CB3">Host commands travel here (D-05)</text>
 
   <!-- Engine -->
   <rect x="820" y="120" width="340" height="270" rx="24" fill="#1C1A21" stroke="#3DDC97" stroke-width="2"/>
   <text x="844" y="156" font-size="19" font-weight="700" fill="#F5F3FF">Game engine</text>
-  <text x="844" y="180" font-size="13" fill="#A19CB3">apps/api/src · zero dependencies · 31 tests</text>
+  <text x="844" y="180" font-size="13" fill="#A19CB3">apps/api/src/game · pure, unit-tested rules</text>
   <g font-size="13" fill="#F5F3FF">
     <rect x="844" y="198" width="140" height="40" rx="20" fill="#2A2730"/><text x="914" y="223" text-anchor="middle">scoring</text>
     <rect x="996" y="198" width="140" height="40" rx="20" fill="#2A2730"/><text x="1066" y="223" text-anchor="middle">standings</text>
@@ -46,12 +46,12 @@
   <text x="844" y="368" font-size="12" fill="#3DDC97">Source of truth for time, answers, points, rank</text>
 
   <!-- Stores -->
-  <rect x="820" y="420" width="160" height="90" rx="22" fill="none" stroke="#6F6A80" stroke-width="2" stroke-dasharray="8 6"/>
+  <rect x="820" y="420" width="160" height="90" rx="22" fill="#1C1A21" stroke="#9D7BFF" stroke-width="2"/>
   <text x="900" y="458" font-size="16" font-weight="700" fill="#F5F3FF" text-anchor="middle">PostgreSQL</text>
-  <text x="900" y="482" font-size="12" fill="#A19CB3" text-anchor="middle">durable records</text>
-  <rect x="1000" y="420" width="160" height="90" rx="22" fill="none" stroke="#6F6A80" stroke-width="2" stroke-dasharray="8 6"/>
+  <text x="900" y="482" font-size="12" fill="#A19CB3" text-anchor="middle">source of truth</text>
+  <rect x="1000" y="420" width="160" height="90" rx="22" fill="#1C1A21" stroke="#9D7BFF" stroke-width="2"/>
   <text x="1080" y="458" font-size="16" font-weight="700" fill="#F5F3FF" text-anchor="middle">Redis</text>
-  <text x="1080" y="482" font-size="12" fill="#A19CB3" text-anchor="middle">room state, pub/sub</text>
+  <text x="1080" y="482" font-size="12" fill="#A19CB3" text-anchor="middle">timers, presence, pub/sub</text>
 
   <!-- arrows -->
   <g stroke="#A19CB3" stroke-width="2" fill="none" marker-end="url(#arrow)">
